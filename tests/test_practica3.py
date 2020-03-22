@@ -186,7 +186,7 @@ class TestPractica3(unittest.TestCase):
 
                 self.child = pexpect.spawn('su {}'.format(user))
                 try:
-                    self.child.expect_exact(['Password', 'Contraseña: '])
+                    self.child.expect_exact(['Password', 'Contrasena: '])
                 except:
                     self.assertTrue(False, msg='Unable to run su')
                 self.child.sendline(pwd)
