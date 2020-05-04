@@ -64,9 +64,9 @@ test $EUID != 0 && echo "Este script necesita privilegios de administracion" && 
 test $# -ne 2 && echo "Numero incorrecto de parametros" && exit 1
 
 # Cualquier otra opción generará el mensaje de error por la salida de error, stderr.
-if [ "$1" = "-a" ]; then
+if [ "$1" == "-a" ]; then
 	anyadirU "$2"
-elif [ "$1" = "-s" ]; then
+elif [ "$1" == "-s" ]; then
 	eliminarU "$2"
 else
 	echo "Opcion invalida" 2>&1
