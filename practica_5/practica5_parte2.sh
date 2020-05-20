@@ -2,13 +2,14 @@
 #735576, Briones Yus, Patricia, T, 1, A
 #757024, Garcés Latre, Germán, T, 1, A
 
-# Cojer direccion ip del primer parametro
+# Coger direccion ip del primer parametro
 [[ $# -ne 1 ]] && echo "Usage: bash practica5_parte2.sh ip_address" && exit 1
 
 ip="$1"
 
 # Comprobar que es una direccion ip valida
 [[ ! $ip =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] && echo "Invalid ip address" && exit 1
+# Faltaría ipv6 pero bueno
 
 # Comprobar disponibilidad
 [[ ! "ping -c 1 $ip" ]] && echo "Host down" && exit 1
