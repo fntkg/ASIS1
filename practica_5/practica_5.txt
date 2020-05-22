@@ -1,0 +1,33 @@
+#################################
+# Memoria_practica5				#
+# NOMBRE: Patricia Briones Yus	#
+# NIA: 735576					#
+#################################
+
+PARTE 1:
+
+Para empezar, en la máquina virtual (apagada) que vayamos a usar, creamos en el apartado de almacenamiento un disco duro nuevo de controlador SATA de 32MiB. Una vez hecho esto, arrancamos la máquina y procedemos a hacer las dos particiones. 
+
+Para saber el nombre del disco nuevo usamos el comando lsblk, en el cual podemos ver que su nombre es "sdb". 
+
+Para el particionamiento usaremos el comando "sudo parted /dev/sdb", ya que las particiones son GUID. Una vez en el menú de "parted" utilizaremos la instrucción "mktable gpt" para crear la tabla de partición. Y para crear las dos particiones utilizamos el comando (todavía en el menú de "parted") "mkpart", en el cual especificaremos el número de la partición (1 ó 2), el tipo de sistema de ficheros (ext3 ó ext4) y los MiB de "inicio" serán 1 en la primera partición y 16 en la segunda, y los MiB de "fin" serán 16 en la primera y 31.5 en la segunda (ya que si no habia problemas porque se salía del rango).
+
+Salimos del menú de "parted". Ahora creamos los ficheros correspondientes a cada partición con "sudo mkfs -t ext3 /dev/sdb1" y lo mismo con "ext4". Para montarlos, creamos antes dos directorios vacios, "/home1" y "/home2", y usamos "sudo mount -t ext3 /dev/sdb1 /home1" siendo el punto de montaje "/home1" (y lo mismo con la otra partición) y comprobamos el correcto montaje en el fichero "/etc/mtab", en el cual aparecen al final. Finalmente, para que el sistema monte las nuevas particiones en el arranque editaremos el fichero "/etc/fstab". Añadiremos una línea por partición, las cuales tendrán una estructura como esta: "UUID=### /home1 ext3 defaults 0 2"; el UUID de cada partición es único, que lo conseguimos con el comando "sudo blkid". Y para su total comprobación de que las dos particiones se montan en el arranque, reiniciamos la máquina y con "df -h" verificamos que nuestras particiones están montadas nada mas iniciar la máquina.
+
+PARTE 2:
+
+Primero comprobamos que el número de parámetros introducido es el correcto. Y si es correcto comprueba que la ip introducida es accesible (mediante una reg ex). 
+
+PARTE 3:
+
+Antes de hacer nada, instalaremos el paquete "lvm2" para poder trabajar con volúmenes lógicos. Después con la máquina usada en la "PARTE 1" apagada, añadimos un nuevo disco duro de 32MiB. Una vez con la máquina encendida, creamos una partición que ocupe todo el espacio del disco, y que sea de tipo LVM (igual que PARTE 1) utilizando el comando set dentro de parted.
+
+SCRIPT 1:
+
+Lo primero que hacemos es comprobar que al menos se ha introducido el grupo volumen y una partición, es decir, dos parámetros. Consideramos que el nombre de las particiones son introducidas sin el prefijo "/dev/". Si los parámetros son correctos, verificamos si el grupo volumen existe, si no, termina el script. Una vez comprobado, para ponernoslo más fácil a la hora de coger el nombre de cada partición, decidimos usar el comando "shift" para pasar todos los parámetros a la izquierda y eliminar así el nombre del grupo volumen, habiéndolo guardado en una variable previamente, quedandonos por parámetros sólo los nombres de las particiones. Con un bucle "for" vamos comprobando si existe la particion, y si es así, la extendemos con "sudo vgextend". También consideramos que las particiones introducidas están desmontadas del sistema antes de iniciar el script.
+
+SCRIPT 2:
+
+En nuestro caso, los datos se obtendrán a través de un fichero pasado por parámetro, el cual contiene los datos con la estructura: nombreGrupoVolumen,nombreVolumenLogico,tamaño,tipoSistemaFicheros,directorioMontaje; y solo se puede introducir un fichero como parámetro. Una vez el número de parámetros sea correcto, comprobamos si el grupo volumen existe, en caso de que no, el script termina. Si existe, comprobamos si entonces existe el volumen logico proporcionado existe. Si no existe, lo crearemos con "lvcreate" y el resto de datos necesarios, le daremos formato, y montaremos el volumen (antes comprobando que el directorio de montaje existe en la máquina). Una vez hecho eso editaremos el fichero /etc/fstab para que el volumen se monte en el arranque. Pero, en caso de que el volumen logico exista, lo extenderemos el tamaño que nos indican, al igual que aumentaremos el tamaño del sistema de ficheros.
+
+Para su comprobación hemos usado el grupo volumen de la parte anterior, como bien indicaba la guía de la práctica.

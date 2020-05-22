@@ -27,7 +27,7 @@ do
 		# Monta el volumen
 		sudo mount -t "$tipo_sf" "/dev/$nom_vg/$nom_vl" "$dir_montaje"	&>/dev/null	
 		# Guarda el UUID
-		UUID=$(sudo blkid | grep "/$nom_vg-$nom_vl:" | cut -d'"' -f2)		
+		UUID=$(sudo blkid | grep "/$nom_vg-$nom_vl:" | cut -d'"' -f2)	
 		# Edita el fichero /etc/fstab para que se monte en el arranque
 		sudo sed -i "\$a UUID=$UUID $dir_montaje $tipo_sf defaults 0 2" /etc/fstab
 	else
