@@ -1,0 +1,16 @@
+#735576, Briones Yus, Patricia, T, 1, A
+#757024, Garcés Latre, Germán, T, 1, A
+
+PARTE I:
+
+Para el uso de rsyslog con logger como nos pide la práctica, hay que configurar el fichero "/etc/rsyslog.conf".
+- Se crea el fichero "/var/log/monitorizacion".
+- En la máquina 1, se añade la línea "local0.info	(tab) /var/log/monitorizacion" para cuando se envíe un mensaje con etiqueta "local0.info" se escriba el mensaje en dicho directorio.
+- En la máquina 2, para aceptar mensajes de registro remoto (permitir la comunicación TCP) se descomentan las líneas correspondientes. Y para poder transmitir la información con rsyslog a otra máquina, añadimos la linea "local0.info (tab) @@(ip):514" al final de este fichero.
+- Reiniciamos el servicio para aplicar los cambios con "sudo service rsyslog restart".
+
+Por último, para el uso de cron cada minuto, editamos el fichero "crontab -e" y se añade la línea "* * * * * (ruta)/practica6_parte1.sh &>/dev/null" (& > /dev/null para que se envie la salida estándar y de error a /dev/null y no se envíen emails. Reiniciar cron con "sudo service cron reload".
+
+PARTE II:
+
+Primero instalamos logcheck. Una vez instalado, para indicarle a logcheck que fichero tiene que escanear, editamos el fichero "/etc/logcheck/logcheck.logfiles" especificando que queremos que escanee el fichero "/var/log/monitorizacion". Y para que envie la información por mail, editamos el fichero "/etc/logcheck/logcheck.conf", y en el apartado de MAILASATTACH ponemos un 1 (para enviar emails). Según este último fichero, el REPORTLEVEL es de tipo server, por tanto se trabajará en el directorio "/etc/logcheck/ignore.d.server". Cuando una línea de log no coincide con ninguna regla, será enviada por correo. Crearemos un nuevo fichero de reglas que llamaremos "monitorizacion", y se configurará al nuestro convenio. Para probar usar # logcheck-test -l {nombre_fichero} '{expresion_regular}'.
